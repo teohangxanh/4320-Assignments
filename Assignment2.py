@@ -3,7 +3,7 @@ Student name: Nghia Dang   Student ID: 726082
 Assignment 2
 Requirement: Modeling and simulating the attendance of a soccer team'''
 
-from pylab import plot, show
+import pylab
 
 # I turned the rate into scores: Win = 3, Draw = 1, Lose = 0
 scores = [3, 3, 3, 3, 3, 3, 0, 3, 1, 1, 3, 0, 0, 3, 3, 0, 3, 3]
@@ -11,19 +11,18 @@ scores = [3, 3, 3, 3, 3, 3, 0, 3, 1, 1, 3, 0, 0, 3, 3, 0, 3, 3]
 att = [8000] * len(scores)
 timesteps = []
 k=15000
-r = 0.1
+r = 1.1
 first_growth = True
 note = ''
 for i in range(len(scores)):
     # Assumption: The attendance does not change after the first two games
     if i >= 2:
         game_before = scores[i - 1] + scores[i - 2]
-        r = (att[i-1]-k)*att[i]/(r-1) + r*att[i-1] - (att[i-1]-k)*att[i-1]/(r-1) # Please read the documentation to know why
         # WW
         if game_before == 6:
             # Increase logistically
-            # att[i] = att[i-1] + r * att[i-1]*(1-att[i-1]/k)
-            att[i] = att[i-1] * r
+            r = (r-1)*att[i-1]/(att[i-1]-k) + 1 - (r-1)*k/(att[i-1]-k)
+            att[i] = att[i-1] + r * att[i-1]*(1-att[i-1]/k)
             note = 'Increase logistically'
                 
         # WD
@@ -35,54 +34,21 @@ for i in range(len(scores)):
         # LL
         elif game_before == 0:
             # Decrease geometrically
-            att[i] = att[i-1] * (1-r)
-            note = 'Decrease geometrically'
+            r = (r-1)*att[i-1]/(att[i-1]-k) + 1 - (r-1)*k/(att[i-1]-k)
+            att[i] = att[i-1] * (2-r)
+            note = 'Decaying'
             
         # Other results
         else:
             # Decrease linearly
-            att[i] = att[i-1] * (1-r)
+            att[i] = att[i-1] * (2-r)
             note = 'Decrease linearly'
-    timesteps.append(i)
-    print(note, end=' ')
-    print(r, end=' ')
-    print(att[i])
+    timesteps.append(i+1)
+    # print(note, end=' ')
+    # print(r, end=' ')
+    # print(att[i])
       
-# print(timesteps)
-# print(att)
-plot(timesteps, att)
-show()
-
-
-'''r = 0.1
-K = 15000
-# Dt = 0.01
-x=8000
-result=[]
-timesteps=[]
-t=0
-
-def initialize():
-    global x, result, t, timesteps
-    x = 8000
-    result = [x]
-    t = 0
-    timesteps = [t]
-    
-def observe():
-    global x, result, t, timesteps
-    result.append(x)
-    timesteps.append(t)
-
-def update():
-    global x, result, t, timesteps
-    x = x + r * x * (1 - x / K)
-    t = t + Dt
-
-initialize()
-    while t < 50:
-    update()
-    observe()
- 
-plot(timesteps, result)
-show()'''
+pylab.plot(timesteps, att)
+pylab.xlabel('Game')
+pylab.ylabel('Attendance')
+pylab.title("Modeled Anfield stadium's attendance, season 2018/2019")

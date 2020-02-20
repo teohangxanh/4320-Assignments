@@ -15,41 +15,33 @@ r = 0.1
 first_growth = True
 note = ''
 for i in range(len(scores)):
+    # Assumption: The attendance does not change after the first two games
     if i >= 2:
         game_before = scores[i - 1] + scores[i - 2]
+        r = (att[i-1]-k)*att[i]/(r-1) + r*att[i-1] - (att[i-1]-k)*att[i-1]/(r-1) # Please read the documentation to know why
         # WW
         if game_before == 6:
-            if first_growth:
-                r = 0.1
-                first_growth = False
-            else:
-                r = (att[i-1] - att[i-2])/att[i-2]
             # Increase logistically
-            att[i] = att[i-1] + r * att[i-1]*(1-att[i-1]/k)
+            # att[i] = att[i-1] + r * att[i-1]*(1-att[i-1]/k)
+            att[i] = att[i-1] * r
             note = 'Increase logistically'
                 
         # WD
         elif game_before == 4:
-            if first_growth:
-                r = 0.1
-                first_growth = False
-            else:
-                # Increase linearly
-                (att[i-1] - att[i-2])/att[i-2]
-            att[i] = att[i-1] * (1+r)
+            # Increase linearly
+            att[i] = att[i-1] * r
             note = 'Increase linearly'
             
         # LL
         elif game_before == 0:
             # Decrease geometrically
-            att[i] = 0.9 * att[i-1]
+            att[i] = att[i-1] * (1-r)
             note = 'Decrease geometrically'
             
         # Other results
         else:
             # Decrease linearly
-            (att[i-1] - att[i-2])/att[i-2]
-            att[i] = att[i-1] * (1+r)
+            att[i] = att[i-1] * (1-r)
             note = 'Decrease linearly'
     timesteps.append(i)
     print(note, end=' ')

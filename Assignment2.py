@@ -23,28 +23,28 @@ for i in range(len(scores)):
             # Increase logistically
             r = (r-1)*att[i-1]/(att[i-1]-k) + 1 - (r-1)*k/(att[i-1]-k)
             att[i] = att[i-1] + r * att[i-1]*(1-att[i-1]/k)
-            note = 'Increase logistically'
+            # note = 'Increase logistically'
                 
         # WD
         elif game_before == 4:
             # Increase linearly
             att[i] = att[i-1] * r
-            note = 'Increase linearly'
+            # note = 'Increase linearly'
             
         # LL
         elif game_before == 0:
             # Decrease geometrically
             att[i] = att[i-1] ** (0.9) # Since decay rate = 0.1 
-            note = 'Decaying'
+            # note = 'Decaying'
             
         # Other results
         else:
             # Decrease linearly
             att[i] = att[i-1] * (2-r)
-            note = 'Decrease linearly'
+            # note = 'Decrease linearly'
     timesteps.append(i+1)
-    print(note, end=' ')
-    print(att[i])
+    # print(note, end=' ')
+    # print(att[i])
       
 pylab.plot(timesteps, att)
 pylab.xlabel('Game')
